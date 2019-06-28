@@ -8,7 +8,7 @@
   },
   "main": "app.js",
   "scripts": {
-    "start": "set DEBUG=app & nodemon ./app.js",
+    "start": "set DEBUG=app,app:* & nodemon ./app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint app.js"
   },
@@ -21,6 +21,7 @@
     "ejs": "^2.6.2",
     "express": "^4.17.1",
     "jquery": "^3.4.1",
+    "mongodb": "^3.2.7",
     "morgan": "^1.9.1",
     "nodemon": "^1.19.1",
     "popper.js": "^1.15.0"
