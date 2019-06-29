@@ -1,52 +1,19 @@
 const express = require('express');
-const debug = require('debug')('app:bookRoutes');
-
-const mongo = require('./../util/mongo');
-
+const bookController = require('./../controllers/bookController');
 
 const bookRouter = express.Router();
+const bookService = require('./../services/goodreadsService');
 
 function router(nav) {
-  bookRouter.use((req, res, next) => {
-    if (req.user) {
-      next();
-    } else {
-      debug('User not logged in, redirecting');
-      res.redirect('/');
-    }
-  });
+  const { userAuthorization, getBooks, getBookById } = bookController(bookService, nav);
+
+  bookRouter.use(userAuthorization);
 
   bookRouter.route('/')
-    .get((req, res) => {
-      debug('Getting books');
-
-      (async function getBooks() {
-        const books = await mongo.getBooks();
-
-        res.render('bookListView', {
-          title: 'Library',
-          nav,
-          books
-        });
-      }());
-    });
+    .get(getBooks);
 
   bookRouter.route('/:id')
-    .get((req, res) => {
-      debug('Getting a book');
-
-      const { id } = req.params;
-
-      (async function getBook() {
-        const book = await mongo.getBook(id);
-
-        res.render('bookView', {
-          title: 'Library',
-          nav,
-          book
-        });
-      }());
-    });
+    .get(getBookById);
 
   return bookRouter;
 }
