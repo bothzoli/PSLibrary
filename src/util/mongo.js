@@ -4,6 +4,48 @@ const debug = require('debug')('app:mongoDB');
 const url = 'mongodb://localhost:27017';
 const dbName = 'LibraryApp';
 
+const createUser = async function createUser(username, password) {
+  let client;
+  let response;
+
+  try {
+    client = await MongoClient.connect(url, { useNewUrlParser: true });
+    debug('Connected correctly to server');
+
+    const db = client.db(dbName);
+
+    debug('Inserting user into DB');
+    [response] = (await db.collection('users')
+      .insertOne({ username, password })).ops;
+  } catch (err) {
+    debug(err.stack);
+  }
+
+  client.close();
+  return response;
+};
+
+const getUser = async function getUser(username) {
+  let client;
+  let response;
+
+  try {
+    client = await MongoClient.connect(url, { useNewUrlParser: true });
+    debug('Connected correctly to server');
+
+    const db = client.db(dbName);
+
+    debug('Getting user from DB');
+    response = (await db.collection('users')
+      .findOne({ username }));
+    debug(response);
+  } catch (err) {
+    debug(err.stack);
+  }
+
+  client.close();
+  return response;
+};
 
 const insertBooks = async function insertBooks(books) {
   let client;
@@ -73,6 +115,8 @@ const getBook = async function getBook(id) {
   return book;
 };
 
+module.exports.createUser = createUser;
+module.exports.getUser = getUser;
 module.exports.insertBooks = insertBooks;
 module.exports.getBooks = getBooks;
 module.exports.getBook = getBook;
